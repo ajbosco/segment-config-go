@@ -156,7 +156,7 @@ func TestDestinations_DeleteDestination(t *testing.T) {
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 	})
 
-	err := client.DeleteDestinaton(testSource, testDest)
+	err := client.DeleteDestination(testSource, testDest)
 	assert.NoError(t, err)
 }
 

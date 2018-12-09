@@ -63,8 +63,8 @@ func (c *Client) CreateDestination(src string, dest Destination) (Destination, e
 	return d, nil
 }
 
-// DeleteDestinaton deletes a destination for a source from the workspace
-func (c *Client) DeleteDestinaton(src string, dest string) error {
+// DeleteDestination deletes a destination for a source from the workspace
+func (c *Client) DeleteDestination(src string, dest string) error {
 	_, err := c.doRequest(http.MethodDelete,
 		fmt.Sprintf("%s/%s/%s/%s/%s/%s",
 			WorkspacesEndpoint, c.workspace, SourceEndpoint, src, DestinationEndpoint, dest),
