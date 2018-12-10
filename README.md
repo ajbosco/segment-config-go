@@ -47,18 +47,12 @@ destinations, err := c.ListDestinations("your-source")
 Create a new [source](https://segment.com/docs/sources/):
 
 ```go
-source, err := c.CreateSource(segment.Source{
-		Name:        "workspaces/your-workspace/sources/your-source",
-		CatalogName: "catalog/sources/javascript"})
+source, err := c.CreateSource("your-source", "catalog/sources/javascript")
 ```
 
 Create a new [destination](https://segment.com/docs/destinations/):
 
 ```go
-source, err := c.CreateDestination("your-source",
-		segment.Destination{
-			Name:           "workspaces/your-workspace/sources/your-source/destinations/google-analytics",
-			ConnectionMode: "cloud",
-			Configs:        []segment.DestinationConfig{}})
+source, err := c.CreateDestination("your-source", "google-analytics", "cloud", false, nil)
 ```
 

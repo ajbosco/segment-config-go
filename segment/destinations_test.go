@@ -109,16 +109,13 @@ func TestDestinations_CreateDestination(t *testing.T) {
 	setup()
 	defer teardown()
 
-	testSource := "test-source"
-	testDest := Destination{
-		Name:           "workspaces/myworkspace/sources/js/destinations/google-analytics",
-		Parent:         "workspaces/myworkspace/sources/js",
-		DisplayName:    "Google Analytics",
-		Enabled:        true,
-		ConnectionMode: "CLOUD"}
+	testSrcName := "test-source"
+	testDestName := "google-analytics"
+	testConnMode := "CLOUD"
+	testEnabled := true
 
 	endpoint := fmt.Sprintf("/%s/%s/%s/%s/%s/%s/",
-		apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint, testSource, DestinationEndpoint)
+		apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint, testSrcName, DestinationEndpoint)
 
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, `{
@@ -137,7 +134,7 @@ func TestDestinations_CreateDestination(t *testing.T) {
 		Enabled:        true,
 		ConnectionMode: "CLOUD"}
 
-	actual, err := client.CreateDestination(testSource, testDest)
+	actual, err := client.CreateDestination(testSrcName, testDestName, testConnMode, testEnabled, nil)
 	assert.NoError(t, err)
 
 	assert.Equal(t, expected, actual)
@@ -164,20 +161,13 @@ func TestDestinations_UpdateDestination(t *testing.T) {
 	setup()
 	defer teardown()
 
-	testSource := "test-source"
-	testDest := "test-dest"
-	testDestUpdate := Destination{
-		Name:           "workspaces/myworkspace/sources/js/destinations/google-analytics",
-		Parent:         "workspaces/myworkspace/sources/js",
-		DisplayName:    "Google Analytics",
-		Enabled:        true,
-		ConnectionMode: "CLOUD"}
-	testUpdateMask := UpdateMask{
-		Paths: []string{"destination.enabled"},
-	}
+	testSrcName := "test-source"
+	testDestName := "google-analytics"
+	testEnabled := false
+	testConfigs := []DestinationConfig{{Name: "test-config", Type: "string", Value: "test-value"}}
 
 	endpoint := fmt.Sprintf("/%s/%s/%s/%s/%s/%s/%s/",
-		apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint, testSource, DestinationEndpoint, testDest)
+		apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint, testSrcName, DestinationEndpoint, testDestName)
 
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, `{
@@ -185,7 +175,14 @@ func TestDestinations_UpdateDestination(t *testing.T) {
 			"parent": "workspaces/myworkspace/sources/js",
 			"display_name": "Google Analytics",
 			"enabled": false,
-			"connection_mode": "CLOUD"
+			"connection_mode": "CLOUD",
+			"config": [
+				{
+				"name": "test-config",
+				"value": "test-value",
+				"type": "string"
+				}
+			]
 		}`)
 	})
 
@@ -194,9 +191,11 @@ func TestDestinations_UpdateDestination(t *testing.T) {
 		Parent:         "workspaces/myworkspace/sources/js",
 		DisplayName:    "Google Analytics",
 		Enabled:        false,
-		ConnectionMode: "CLOUD"}
+		ConnectionMode: "CLOUD",
+		Configs:        testConfigs,
+	}
 
-	actual, err := client.UpdateDestination(testSource, testDest, testDestUpdate, testUpdateMask)
+	actual, err := client.UpdateDestination(testSrcName, testDestName, testEnabled, testConfigs)
 	assert.NoError(t, err)
 
 	assert.Equal(t, expected, actual)
