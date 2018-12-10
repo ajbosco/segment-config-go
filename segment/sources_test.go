@@ -122,9 +122,8 @@ func TestSources_CreateSource(t *testing.T) {
 	setup()
 	defer teardown()
 
-	testSource := Source{
-		Name:        "workspaces/your-workspace/sources/your-source",
-		CatalogName: "catalog/sources/javascript"}
+	testSrcName := "your-source"
+	testCatName := "catalog/sources/javascript"
 
 	endpoint := fmt.Sprintf("/%s/%s/%s/%s/",
 		apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint)
@@ -157,7 +156,7 @@ func TestSources_CreateSource(t *testing.T) {
 			CrossDomainIDEnabled: false,
 			APIHost:              ""}}
 
-	actual, err := client.CreateSource(testSource)
+	actual, err := client.CreateSource(testSrcName, testCatName)
 	assert.NoError(t, err)
 
 	assert.Equal(t, expected, actual)
