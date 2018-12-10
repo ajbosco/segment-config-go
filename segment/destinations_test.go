@@ -164,7 +164,7 @@ func TestDestinations_UpdateDestination(t *testing.T) {
 	testSrcName := "test-source"
 	testDestName := "google-analytics"
 	testEnabled := false
-	testConfigs := []DestinationConfig{DestinationConfig{Name: "test-config", Type: "string", Value: "test-value"}}
+	testConfigs := []DestinationConfig{{Name: "test-config", Type: "string", Value: "test-value"}}
 
 	endpoint := fmt.Sprintf("/%s/%s/%s/%s/%s/%s/%s/",
 		apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint, testSrcName, DestinationEndpoint, testDestName)
