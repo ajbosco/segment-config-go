@@ -1,6 +1,8 @@
 package segment
 
-import "time"
+import (
+	"time"
+)
 
 // Workspace defines the struct for the workspace object
 type Workspace struct {
@@ -74,4 +76,70 @@ type destinationCreateRequest struct {
 type destinationUpdateRequest struct {
 	Destination Destination `json:"destination,omitempty"`
 	UpdateMask  UpdateMask  `json:"update_mask,omitempty"`
+}
+
+// TrackingPlans is a list of tracking plans
+type TrackingPlans struct {
+	TrackingPlans []TrackingPlan `json:"tracking_plans,omitempty"`
+}
+
+// TrackingPlan contains information about a tracking plan
+type TrackingPlan struct {
+	Name        string    `json:"name,omitempty"`
+	DisplayName string    `json:"display_name,omitempty"`
+	Rules       RuleSet   `json:"rules,omitempty"`
+	CreateTime  time.Time `json:"create_time,omitempty"`
+	UpdateTime  time.Time `json:"update_time,omitempty"`
+}
+
+// RuleSet contains a set of different rules about the tracking plan
+type RuleSet struct {
+	Global   Rules   `json:"global,omitempty"`
+	Events   []Event `json:"events,omitempty"`
+	Identify Rules   `json:"identify,omitempty"`
+	Group    Rules   `json:"group,omitempty"`
+}
+
+// Rules contains information about a specific type of rules of the tracking plan
+type Rules struct {
+	Schema     string         `json:"$schema,omitempty"`
+	Type       string         `json:"type,omitempty"`
+	Properties RuleProperties `json:"properties,omitempty"`
+	Version    *int           `json:"version,omitempty"`
+}
+
+// RuleProperties contains the different properties of a specific type of rules
+type RuleProperties struct {
+	Context    Properties `json:"context,omitempty"`
+	Properties Properties `json:"properties,omitempty"`
+	Traits     Properties `json:"traits,omitempty"`
+}
+
+// Properties contains information about the a specific type of rule properties
+type Properties struct {
+	Properties map[string]Property `json:"properties,omitempty"`
+	Required   []string            `json:"required,omitempty"`
+	Type       string              `json:"type,omitempty"`
+}
+
+// Property contains information of a single property
+type Property struct {
+	Description string   `json:"description,omitempty"`
+	Type        []string `json:"type,omitempty"`
+}
+
+// Event contains information about a single event of the tracking plan
+type Event struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Rules       Rules  `json:"rules,omitempty"`
+}
+
+type trackingPlanCreateRequest struct {
+	TrackingPlan TrackingPlan `json:"tracking_plan,omitempty"`
+}
+
+type trackingPlanUpdateRequest struct {
+	UpdateMask   UpdateMask   `json:"update_mask,omitempty"`
+	TrackingPlan TrackingPlan `json:"tracking_plan,omitempty"`
 }
