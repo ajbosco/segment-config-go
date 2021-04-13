@@ -124,8 +124,11 @@ type Properties struct {
 
 // Property contains information of a single property
 type Property struct {
-	Description string   `json:"description,omitempty"`
-	Type        []string `json:"type,omitempty"`
+	Description string              `json:"description,omitempty"`
+	Type        []string            `json:"type,omitempty"`
+	Items       *Property           `json:"items,omitempty"`
+	Properties  map[string]Property `json:"properties,omitempty"`
+	Required    []string            `json:"required,omitempty"`
 }
 
 // Event contains information about a single event of the tracking plan

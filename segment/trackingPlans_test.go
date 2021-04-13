@@ -69,6 +69,51 @@ const (
 						"type": [
 						  "integer"
 						]
+					  },
+					  "array_prop": {
+						"type": [
+						  "array"
+						],
+						"description": "array prop",
+						"items": {
+						  "type": [
+							"string"
+						  ],
+						  "description": ""
+						}
+					  },
+					  "prop_obj": {
+						"description": "object prop",
+						"type": [
+						  "object"
+						],
+						"properties": {
+						  "prop_str": {
+							"type": [
+							  "string"
+							],
+							"description": ""
+						  },
+						  "prop_obj_nested": {
+							"type": [
+							  "object"
+							],
+							"description": "nested object prop",
+							"properties": {
+							  "prop_bool": {
+								"type": [
+								  "boolean"
+								],
+								"description": ""
+							  }
+							},
+							"required": []
+						  }
+						},
+						"required": [
+						  "prop_str",
+						  "prop_obj_nested"
+						]
 					  }
 					},
 					"context": {}
@@ -194,6 +239,36 @@ func TestTrackingPlans_GetTrackingPlan(t *testing.T) {
 										Description: "test prop",
 										Type:        []string{"integer"},
 									},
+									"array_prop": {
+										Description: "array prop",
+										Type:        []string{"array"},
+										Items: &Property{
+											Description: "",
+											Type:        []string{"string"},
+										},
+									},
+									"prop_obj": {
+										Description: "object prop",
+										Required:    []string{"prop_str", "prop_obj_nested"},
+										Type:        []string{"object"},
+										Properties: map[string]Property{
+											"prop_str": {
+												Type:        []string{"string"},
+												Description: "",
+											},
+											"prop_obj_nested": {
+												Type:        []string{"object"},
+												Description: "nested object prop",
+												Properties: map[string]Property{
+													"prop_bool": {
+														Type:        []string{"boolean"},
+														Description: "",
+													},
+												},
+												Required: []string{},
+											},
+										},
+									},
 								},
 							},
 							Context: Properties{},
@@ -262,6 +337,36 @@ func TestTrackingPlans_CreateTrackingPlan(t *testing.T) {
 									"test_prop": {
 										Description: "test prop",
 										Type:        []string{"integer"},
+									},
+									"array_prop": {
+										Description: "array prop",
+										Type:        []string{"array"},
+										Items: &Property{
+											Description: "",
+											Type:        []string{"string"},
+										},
+									},
+									"prop_obj": {
+										Description: "object prop",
+										Required:    []string{"prop_str", "prop_obj_nested"},
+										Type:        []string{"object"},
+										Properties: map[string]Property{
+											"prop_str": {
+												Type:        []string{"string"},
+												Description: "",
+											},
+											"prop_obj_nested": {
+												Type:        []string{"object"},
+												Description: "nested object prop",
+												Properties: map[string]Property{
+													"prop_bool": {
+														Type:        []string{"boolean"},
+														Description: "",
+													},
+												},
+												Required: []string{},
+											},
+										},
 									},
 								},
 							},
@@ -335,6 +440,36 @@ func TestTrackingPlans_UpdateTrackingPlan(t *testing.T) {
 									"test_prop": {
 										Description: "test prop",
 										Type:        []string{"integer"},
+									},
+									"array_prop": {
+										Description: "array prop",
+										Type:        []string{"array"},
+										Items: &Property{
+											Description: "",
+											Type:        []string{"string"},
+										},
+									},
+									"prop_obj": {
+										Description: "object prop",
+										Required:    []string{"prop_str", "prop_obj_nested"},
+										Type:        []string{"object"},
+										Properties: map[string]Property{
+											"prop_str": {
+												Type:        []string{"string"},
+												Description: "",
+											},
+											"prop_obj_nested": {
+												Type:        []string{"object"},
+												Description: "nested object prop",
+												Properties: map[string]Property{
+													"prop_bool": {
+														Type:        []string{"boolean"},
+														Description: "",
+													},
+												},
+												Required: []string{},
+											},
+										},
 									},
 								},
 							},
