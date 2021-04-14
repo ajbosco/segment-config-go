@@ -17,3 +17,8 @@ test: ## Runs the go tests.
 .PHONY: vet
 vet: ## Verifies `go vet` passes.
 	@go vet $(shell go list ./... | grep -v vendor) | tee /dev/stderr
+
+.PHONY: vendor
+vendor: ## Vendor deps
+	@go mod tidy
+	@go mod vendor
