@@ -1,6 +1,6 @@
 # segment-config-go
 
-[![Travis CI](https://img.shields.io/travis/ajbosco/segment-config-go.svg?style=flat-square)](https://travis-ci.org/ajbosco/segment-config-go)
+[![Github Actions](https://github.com/ajbosco/segment-config-go/workflows/build/badge.svg?branch=main&event=push)](https://github.com/segment-config-go/rides/actions?workflow=build)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ajbosco/segment-config-go?style=flat-square)](https://goreportcard.com/report/github.com/ajbosco/segment-config-go)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=flat-square)](https://godoc.org/github.com/ajbosco/segment-config-go/segment)
 
