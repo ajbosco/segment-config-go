@@ -14,7 +14,7 @@ func TestSources_ListSources(t *testing.T) {
 
 	endpoint := fmt.Sprintf("/%s/%s/%s/%s/", apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint)
 
-	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprint(w, `{
 			"sources": [
 			  {
@@ -85,7 +85,7 @@ func TestSources_GetSource(t *testing.T) {
 	endpoint := fmt.Sprintf("/%s/%s/%s/%s/%s/",
 		apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint, testSource)
 
-	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprint(w, `{
 			"name": "workspaces/myworkspace/sources/js",
 			"parent": "workspaces/myworkspace",
@@ -128,7 +128,7 @@ func TestSources_CreateSource(t *testing.T) {
 	endpoint := fmt.Sprintf("/%s/%s/%s/%s/",
 		apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint)
 
-	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprint(w, `{
 			"name": "workspaces/myworkspace/sources/js",
 			"parent": "workspaces/myworkspace",
@@ -176,4 +176,104 @@ func TestSources_DeleteSource(t *testing.T) {
 
 	err := client.DeleteSource(testSource)
 	assert.NoError(t, err)
+}
+
+func TestSources_UpdateSourceConfig(t *testing.T) {
+	setup()
+	defer teardown()
+
+	testSource := "test-source"
+	endpoint := fmt.Sprintf("/%s/%s/%s/%s/%s/schema-config", apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint, testSource)
+
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprintf(w, `{
+			"name": "workspaces/%s/sources/%s/schema-config",
+			"parent": "sources/js",
+			"allow_unplanned_track_events": false,
+			"allow_unplanned_identify_traits": true,
+			"allow_unplanned_group_traits": false,
+			"forwarding_blocked_events_to": "forwarding_blocked_events_to_source_slug",
+			"allow_unplanned_track_event_properties": true,
+			"allow_track_event_on_violations": false,
+			"allow_identify_traits_on_violations": true,
+			"allow_group_traits_on_violations": false,
+			"forwarding_violations_to": "forwarding_violations_to_source_slug",
+			"allow_track_properties_on_violations": false,
+			"common_track_event_on_violations": "ALLOW",
+			"common_identify_event_on_violations": "ALLOW",
+			"common_group_event_on_violations": "ALLOW"
+		}`, testWorkspace, testSource)
+	})
+
+	expected := SourceConfig{
+		Name:                                "workspaces/" + testWorkspace + "/sources/" + testSource + "/schema-config",
+		Parent:                              "sources/js",
+		AllowUnplannedTrackEvents:           false,
+		AllowUnplannedIdentifyTraits:        true,
+		AllowUnplannedGroupTraits:           false,
+		ForwardingBlockedEventsTo:           "forwarding_blocked_events_to_source_slug",
+		AllowUnplannedTrackEventsProperties: true,
+		AllowTrackEventOnViolations:         false,
+		AllowIdentifyTraitsOnViolations:     true,
+		AllowGroupTraitsOnViolations:        false,
+		ForwardingViolationsTo:              "forwarding_violations_to_source_slug",
+		AllowTrackPropertiesOnViolations:    false,
+		CommonTrackEventOnViolations:        Allow,
+		CommonIdentifyEventOnViolations:     Allow,
+		CommonGroupEventOnViolations:        Allow,
+	}
+
+	returned, err := client.UpdateSourceConfig(testSource, expected)
+	assert.NoError(t, err)
+	assert.Equal(t, expected, returned)
+}
+
+func TestSources_GetSourceConfig(t *testing.T) {
+	setup()
+	defer teardown()
+
+	testSource := "test-source"
+	endpoint := fmt.Sprintf("/%s/%s/%s/%s/%s/schema-config", apiVersion, WorkspacesEndpoint, testWorkspace, SourceEndpoint, testSource)
+
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprintf(w, `{
+			"name": "workspaces/%s/sources/%s/schema-config",
+			"parent": "sources/js",
+			"allow_unplanned_track_events": true,
+			"allow_unplanned_identify_traits": true,
+			"allow_unplanned_group_traits": true,
+			"forwarding_blocked_events_to": "forwarding_blocked_events_to_source_slug",
+			"allow_unplanned_track_event_properties": true,
+			"allow_track_event_on_violations": true,
+			"allow_identify_traits_on_violations": true,
+			"allow_group_traits_on_violations": true,
+			"forwarding_violations_to": "forwarding_violations_to_source_slug",
+			"allow_track_properties_on_violations": true,
+			"common_track_event_on_violations": "ALLOW",
+			"common_identify_event_on_violations": "OMIT_TRAITS",
+			"common_group_event_on_violations": "BLOCK"
+		}`, testWorkspace, testSource)
+	})
+
+	expected := SourceConfig{
+		Name:                                "workspaces/" + testWorkspace + "/sources/" + testSource + "/schema-config",
+		Parent:                              "sources/js",
+		AllowUnplannedTrackEvents:           true,
+		AllowUnplannedIdentifyTraits:        true,
+		AllowUnplannedGroupTraits:           true,
+		ForwardingBlockedEventsTo:           "forwarding_blocked_events_to_source_slug",
+		AllowUnplannedTrackEventsProperties: true,
+		AllowTrackEventOnViolations:         true,
+		AllowIdentifyTraitsOnViolations:     true,
+		AllowGroupTraitsOnViolations:        true,
+		ForwardingViolationsTo:              "forwarding_violations_to_source_slug",
+		AllowTrackPropertiesOnViolations:    true,
+		CommonTrackEventOnViolations:        Allow,
+		CommonIdentifyEventOnViolations:     OmitTraits,
+		CommonGroupEventOnViolations:        Block,
+	}
+
+	returned, err := client.GetSourceConfig(testSource)
+	assert.NoError(t, err)
+	assert.Equal(t, expected, returned)
 }
