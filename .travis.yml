@@ -1,8 +1,0 @@
-language: go
-sudo: false
-go:
-  - 1.16.x
-script:
-  - go test -v -mod=vendor ./...
-
-install: true
