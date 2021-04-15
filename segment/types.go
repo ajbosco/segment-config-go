@@ -105,7 +105,6 @@ type Rules struct {
 	Schema     string         `json:"$schema,omitempty"`
 	Type       string         `json:"type,omitempty"`
 	Properties RuleProperties `json:"properties,omitempty"`
-	Version    *int           `json:"version,omitempty"`
 }
 
 // RuleProperties contains the different properties of a specific type of rules
@@ -115,7 +114,7 @@ type RuleProperties struct {
 	Traits     Properties `json:"traits,omitempty"`
 }
 
-// Properties contains information about the a specific type of rule properties
+// Properties contains information about a specific type of rule properties
 type Properties struct {
 	Properties map[string]Property `json:"properties,omitempty"`
 	Required   []string            `json:"required,omitempty"`
@@ -125,7 +124,7 @@ type Properties struct {
 // Property contains information of a single property
 type Property struct {
 	Description string              `json:"description,omitempty"`
-	Type        []string            `json:"type,omitempty"`
+	Type        interface{}         `json:"type,omitempty"`
 	Items       *Property           `json:"items,omitempty"`
 	Properties  map[string]Property `json:"properties,omitempty"`
 	Required    []string            `json:"required,omitempty"`
@@ -136,6 +135,7 @@ type Event struct {
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Rules       Rules  `json:"rules,omitempty"`
+	Version     *int   `json:"version,omitempty"`
 }
 
 type trackingPlanCreateRequest struct {

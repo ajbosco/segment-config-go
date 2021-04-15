@@ -23,9 +23,7 @@ const (
 				"type": "object",
 				"properties": {
 				  "context_prop_1": {
-					"type": [
-					  "object"
-					]
+					"type": "object"
 				  }
 				},
 				"required": [
@@ -40,6 +38,7 @@ const (
 			{
 			  "name": "Test Event Clicked",
 			  "description": "A simple test event",
+			  "version": 1,
 			  "rules": {
 				"$schema": "http://json-schema.org/draft-07/schema#",
 				"type": "object",
@@ -54,56 +53,38 @@ const (
 					"properties": {
 					  "user_id": {
 						"description": "unique id of the user",
-						"type": [
-						  "string"
-						]
+						"type": "string"
 					  },
 					  "email": {
 						"description": "user email",
-						"type": [
-						  "string"
-						]
+						"type": "string"
 					  },
 					  "test_prop": {
 						"description": "test prop",
-						"type": [
-						  "integer"
-						]
+						"type": "integer"
 					  },
 					  "array_prop": {
-						"type": [
-						  "array"
-						],
+						"type": "array",
 						"description": "array prop",
 						"items": {
-						  "type": [
-							"string"
-						  ],
+						  "type": "string",
 						  "description": ""
 						}
 					  },
 					  "prop_obj": {
 						"description": "object prop",
-						"type": [
-						  "object"
-						],
+						"type": "object",
 						"properties": {
 						  "prop_str": {
-							"type": [
-							  "string"
-							],
+							"type": ["string", "null"],
 							"description": ""
 						  },
 						  "prop_obj_nested": {
-							"type": [
-							  "object"
-							],
+							"type": "object",
 							"description": "nested object prop",
 							"properties": {
 							  "prop_bool": {
-								"type": [
-								  "boolean"
-								],
+								"type": "boolean",
 								"description": ""
 							  }
 							},
@@ -118,8 +99,7 @@ const (
 					},
 					"context": {}
 				  }
-				},
-				"version": 1
+				}
 			  }
 			}
 		  ]
@@ -205,7 +185,7 @@ func TestTrackingPlans_GetTrackingPlan(t *testing.T) {
 						Type: "object",
 						Properties: map[string]Property{
 							"context_prop_1": {
-								Type: []string{"object"},
+								Type: "object",
 							},
 						},
 						Required: []string{"context_prop_1"},
@@ -218,6 +198,7 @@ func TestTrackingPlans_GetTrackingPlan(t *testing.T) {
 				{
 					Name:        "Test Event Clicked",
 					Description: "A simple test event",
+					Version:     &version,
 					Rules: Rules{
 						Schema: "http://json-schema.org/draft-07/schema#",
 						Type:   "object",
@@ -229,39 +210,39 @@ func TestTrackingPlans_GetTrackingPlan(t *testing.T) {
 								Properties: map[string]Property{
 									"user_id": {
 										Description: "unique id of the user",
-										Type:        []string{"string"},
+										Type:        "string",
 									},
 									"email": {
 										Description: "user email",
-										Type:        []string{"string"},
+										Type:        "string",
 									},
 									"test_prop": {
 										Description: "test prop",
-										Type:        []string{"integer"},
+										Type:        "integer",
 									},
 									"array_prop": {
 										Description: "array prop",
-										Type:        []string{"array"},
+										Type:        "array",
 										Items: &Property{
 											Description: "",
-											Type:        []string{"string"},
+											Type:        "string",
 										},
 									},
 									"prop_obj": {
 										Description: "object prop",
 										Required:    []string{"prop_str", "prop_obj_nested"},
-										Type:        []string{"object"},
+										Type:        "object",
 										Properties: map[string]Property{
 											"prop_str": {
-												Type:        []string{"string"},
+												Type:        []interface{}{"string", "null"},
 												Description: "",
 											},
 											"prop_obj_nested": {
-												Type:        []string{"object"},
+												Type:        "object",
 												Description: "nested object prop",
 												Properties: map[string]Property{
 													"prop_bool": {
-														Type:        []string{"boolean"},
+														Type:        "boolean",
 														Description: "",
 													},
 												},
@@ -273,7 +254,6 @@ func TestTrackingPlans_GetTrackingPlan(t *testing.T) {
 							},
 							Context: Properties{},
 						},
-						Version: &version,
 					},
 				},
 			},
@@ -304,7 +284,7 @@ func TestTrackingPlans_CreateTrackingPlan(t *testing.T) {
 						Type: "object",
 						Properties: map[string]Property{
 							"context_prop_1": {
-								Type: []string{"object"},
+								Type: "object",
 							},
 						},
 						Required: []string{"context_prop_1"},
@@ -317,6 +297,7 @@ func TestTrackingPlans_CreateTrackingPlan(t *testing.T) {
 				{
 					Name:        "Test Event Clicked",
 					Description: "A simple test event",
+					Version:     &version,
 					Rules: Rules{
 						Schema: "http://json-schema.org/draft-07/schema#",
 						Type:   "object",
@@ -328,39 +309,39 @@ func TestTrackingPlans_CreateTrackingPlan(t *testing.T) {
 								Properties: map[string]Property{
 									"user_id": {
 										Description: "unique id of the user",
-										Type:        []string{"string"},
+										Type:        "string",
 									},
 									"email": {
 										Description: "user email",
-										Type:        []string{"string"},
+										Type:        "string",
 									},
 									"test_prop": {
 										Description: "test prop",
-										Type:        []string{"integer"},
+										Type:        "integer",
 									},
 									"array_prop": {
 										Description: "array prop",
-										Type:        []string{"array"},
+										Type:        "array",
 										Items: &Property{
 											Description: "",
-											Type:        []string{"string"},
+											Type:        "string",
 										},
 									},
 									"prop_obj": {
 										Description: "object prop",
 										Required:    []string{"prop_str", "prop_obj_nested"},
-										Type:        []string{"object"},
+										Type:        "object",
 										Properties: map[string]Property{
 											"prop_str": {
-												Type:        []string{"string"},
+												Type:        []interface{}{"string", "null"},
 												Description: "",
 											},
 											"prop_obj_nested": {
-												Type:        []string{"object"},
+												Type:        "object",
 												Description: "nested object prop",
 												Properties: map[string]Property{
 													"prop_bool": {
-														Type:        []string{"boolean"},
+														Type:        "boolean",
 														Description: "",
 													},
 												},
@@ -371,7 +352,6 @@ func TestTrackingPlans_CreateTrackingPlan(t *testing.T) {
 								},
 							},
 						},
-						Version: &version,
 					},
 				},
 			},
@@ -407,7 +387,7 @@ func TestTrackingPlans_UpdateTrackingPlan(t *testing.T) {
 						Type: "object",
 						Properties: map[string]Property{
 							"context_prop_1": {
-								Type: []string{"object"},
+								Type: "object",
 							},
 						},
 						Required: []string{"context_prop_1"},
@@ -420,6 +400,7 @@ func TestTrackingPlans_UpdateTrackingPlan(t *testing.T) {
 				{
 					Name:        "Test Event Clicked",
 					Description: "A simple test event",
+					Version:     &version,
 					Rules: Rules{
 						Schema: "http://json-schema.org/draft-07/schema#",
 						Type:   "object",
@@ -431,39 +412,39 @@ func TestTrackingPlans_UpdateTrackingPlan(t *testing.T) {
 								Properties: map[string]Property{
 									"user_id": {
 										Description: "unique id of the user",
-										Type:        []string{"string"},
+										Type:        "string",
 									},
 									"email": {
 										Description: "user email",
-										Type:        []string{"string"},
+										Type:        "string",
 									},
 									"test_prop": {
 										Description: "test prop",
-										Type:        []string{"integer"},
+										Type:        "integer",
 									},
 									"array_prop": {
 										Description: "array prop",
-										Type:        []string{"array"},
+										Type:        "array",
 										Items: &Property{
 											Description: "",
-											Type:        []string{"string"},
+											Type:        "string",
 										},
 									},
 									"prop_obj": {
 										Description: "object prop",
 										Required:    []string{"prop_str", "prop_obj_nested"},
-										Type:        []string{"object"},
+										Type:        "object",
 										Properties: map[string]Property{
 											"prop_str": {
-												Type:        []string{"string"},
+												Type:        []interface{}{"string", "null"},
 												Description: "",
 											},
 											"prop_obj_nested": {
-												Type:        []string{"object"},
+												Type:        "object",
 												Description: "nested object prop",
 												Properties: map[string]Property{
 													"prop_bool": {
-														Type:        []string{"boolean"},
+														Type:        "boolean",
 														Description: "",
 													},
 												},
@@ -474,7 +455,6 @@ func TestTrackingPlans_UpdateTrackingPlan(t *testing.T) {
 								},
 							},
 						},
-						Version: &version,
 					},
 				},
 			},
