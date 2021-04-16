@@ -48,7 +48,7 @@ func Test_doRequest(t *testing.T) {
 
 	testData := `{"testing":"things"}`
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprint(w, testData)
 	})
 
@@ -59,14 +59,43 @@ func Test_doRequest(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func Test_doRequest_httpError(t *testing.T) {
+func Test_doRequest_httpError_notFound(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "Bad Request", 400)
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, "Not Found", 404)
 	})
 
 	_, err := client.doRequest(http.MethodGet, "/", nil)
 	assert.Error(t, err)
+}
+
+func Test_doRequest_httpError_badRequest(t *testing.T) {
+	setup()
+	defer teardown()
+
+	expected := SegmentApiError{Code: 5, Message: "foo"}
+	errorJson := `{ "error": "foo", "code": 5 }`
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, errorJson, 400)
+	})
+
+	_, err := client.doRequest(http.MethodGet, "/", nil)
+	assert.EqualError(t, err, expected.Error())
+}
+
+func Test_doRequest_httpError_badRequestUnstructured(t *testing.T) {
+	setup()
+	defer teardown()
+
+	expected := "the request is invalid"
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, "bad request", 400)
+	})
+
+	_, err := client.doRequest(http.MethodGet, "/", nil)
+	assert.EqualError(t, err, expected)
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -78,7 +79,7 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 	case http.StatusNotFound:
 		return nil, fmt.Errorf("the requested uri does not exist")
 	case http.StatusBadRequest:
-		return nil, fmt.Errorf("the request is invalid")
+		return nil, handleBadRequest(resp.Body)
 	default:
 		return nil, fmt.Errorf("bad response code: %d", resp.StatusCode)
 	}
@@ -89,4 +90,19 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 	}
 
 	return body, nil
+}
+
+func handleBadRequest(body io.ReadCloser) error {
+	errBody, err := ioutil.ReadAll(body)
+	if err != nil {
+		return fmt.Errorf("the request is invalid")
+	}
+
+	var segmentErr SegmentApiError
+	err = json.Unmarshal(errBody, &segmentErr)
+	if err != nil {
+		return fmt.Errorf("the request is invalid")
+	}
+
+	return &segmentErr
 }
