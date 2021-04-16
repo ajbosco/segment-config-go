@@ -110,6 +110,8 @@ func (c *Client) DeleteTrackingPlan(trackingPlanID string) error {
 	return nil
 }
 
+// CreateTrackingPlanSourceConnection associates a source to a tracking plan
+// https://reference.segmentapis.com/#8c794e32-86e5-4a81-96e1-dc30368f7a9e
 func (c *Client) CreateTrackingPlanSourceConnection(planId string, sourceName string) error {
 	data, err := c.doRequest(http.MethodPost,
 		fmt.Sprintf("%s/%s/%s/%s/source-connections",
@@ -127,6 +129,8 @@ func (c *Client) CreateTrackingPlanSourceConnection(planId string, sourceName st
 	return nil
 }
 
+// ListTrackingPlanSources lists all the sources associated with a given tracking plan
+// API Doc: https://reference.segmentapis.com/#27a50096-e444-48e6-abb5-6e9445740634
 func (c *Client) ListTrackingPlanSources(planId string) ([]TrackingPlanSourceConnection, error) {
 	var connections TrackingPlanSourceConnections
 	data, err := c.doRequest(http.MethodGet,
@@ -144,6 +148,8 @@ func (c *Client) ListTrackingPlanSources(planId string) ([]TrackingPlanSourceCon
 	return connections.Connections, nil
 }
 
+// DeleteTrackingPlanSourceConnection removes the connection between a source and a tracking plan
+// API Doc: https://reference.segmentapis.com/#6d50bdb0-87fc-47b6-9169-5b022119fe2e
 func (c *Client) DeleteTrackingPlanSourceConnection(planId string, sourceName string) error {
 	data, err := c.doRequest(http.MethodDelete,
 		fmt.Sprintf("%s/%s/%s/%s/source-connections/%s",
