@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -109,7 +110,60 @@ func (c *Client) DeleteTrackingPlan(trackingPlanID string) error {
 	return nil
 }
 
-// TODO: Create tracking plan source connection
-// TODO: List tracking plan source connections
-// TODO: Delete tracking plan source connection
+// CreateTrackingPlanSourceConnection associates a source to a tracking plan
+// https://reference.segmentapis.com/#8c794e32-86e5-4a81-96e1-dc30368f7a9e
+func (c *Client) CreateTrackingPlanSourceConnection(planId string, sourceName string) error {
+	data, err := c.doRequest(http.MethodPost,
+		fmt.Sprintf("%s/%s/%s/%s/source-connections",
+			WorkspacesEndpoint, c.workspace, TrackingPlanEndpoint, planId),
+		trackingPlanSourceConnectionCreateRequest{Name: fmt.Sprintf("workspaces/%s/sources/%s", c.workspace, sourceName)})
+	if err != nil {
+		return err
+	}
+
+	var result TrackingPlanSourceConnection
+	if err := json.Unmarshal(data, &result); err != nil {
+		return errors.Errorf("Unexpected response body: %s", string(data))
+	}
+
+	return nil
+}
+
+// ListTrackingPlanSources lists all the sources associated with a given tracking plan
+// API Doc: https://reference.segmentapis.com/#27a50096-e444-48e6-abb5-6e9445740634
+func (c *Client) ListTrackingPlanSources(planId string) ([]TrackingPlanSourceConnection, error) {
+	var connections TrackingPlanSourceConnections
+	data, err := c.doRequest(http.MethodGet,
+		fmt.Sprintf("%s/%s/%s/%s/source-connections",
+			WorkspacesEndpoint, c.workspace, TrackingPlanEndpoint, planId),
+		nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal(data, &connections); err != nil {
+		return connections.Connections, err
+	}
+
+	return connections.Connections, nil
+}
+
+// DeleteTrackingPlanSourceConnection removes the connection between a source and a tracking plan
+// API Doc: https://reference.segmentapis.com/#6d50bdb0-87fc-47b6-9169-5b022119fe2e
+func (c *Client) DeleteTrackingPlanSourceConnection(planId string, sourceName string) error {
+	data, err := c.doRequest(http.MethodDelete,
+		fmt.Sprintf("%s/%s/%s/%s/source-connections/%s",
+			WorkspacesEndpoint, c.workspace, TrackingPlanEndpoint, planId, sourceName),
+		nil)
+	if err != nil {
+		return err
+	}
+
+	if strings.TrimSpace(string(data)) != "{}" {
+		return errors.Errorf("Unexpected response body: %s", string(data))
+	}
+
+	return nil
+}
+
 // TODO: Batch create tracking plan source connections
