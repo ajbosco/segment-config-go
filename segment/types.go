@@ -187,6 +187,21 @@ type trackingPlanUpdateRequest struct {
 	TrackingPlan TrackingPlan `json:"tracking_plan,omitempty"`
 }
 
+type TrackingPlanSourceConnections struct {
+	Connections []TrackingPlanSourceConnection `json:"connections,omitempty"`
+}
+
+// TrackingPlanSourceConnection represents the link between a tracking plan and a source
+type TrackingPlanSourceConnection struct {
+	// Source is the full name of the source (including the workspace path)
+	Source         string `json:"source_name,omitempty"`
+	TrackingPlanId string `json:"tracking_plan_id,omitempty"`
+}
+
+type trackingPlanSourceConnectionCreateRequest struct {
+	Name string `json:"source_name"`
+}
+
 type SegmentApiError struct {
 	Message string `json:"error,omitempty"`
 	Code    int    `json:"code,omitempty"`

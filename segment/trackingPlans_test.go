@@ -1,7 +1,10 @@
 package segment
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"testing"
 
@@ -105,6 +108,18 @@ const (
 		  ]
 		}
 	  }`
+	testSourcesResponse = `{
+		"connections": [
+			{
+				"source_name": "workspaces/myworkspace/sources/test_source1",
+				"tracking_plan_id": "rs_123abc"
+			},
+			{
+				"source_name": "workspaces/myworkspace/sources/test_source2",
+				"tracking_plan_id": "rs_123abc"
+			}
+		]
+	}`
 )
 
 func TestTrackingPlans_ListTrackingPlans(t *testing.T) {
@@ -479,5 +494,66 @@ func TestTrackingPlans_DeleteTrackingPlan(t *testing.T) {
 	})
 
 	err := client.DeleteTrackingPlan(testTrackingPlanID)
+	assert.NoError(t, err)
+}
+func TestTrackingPlans_ListTrackingPlansSourceConnections(t *testing.T) {
+	setup()
+	defer teardown()
+
+	endpoint := fmt.Sprintf("/%s/%s/%s/%s/%s/source-connections", apiVersion, WorkspacesEndpoint, testWorkspace, TrackingPlanEndpoint, testTrackingPlanID)
+
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			fmt.Fprint(w, testSourcesResponse)
+		}
+	})
+
+	actual, err := client.ListTrackingPlanSources(testTrackingPlanID)
+	assert.NoError(t, err)
+
+	expected := []TrackingPlanSourceConnection{
+		{Source: "workspaces/myworkspace/sources/test_source1", TrackingPlanId: testTrackingPlanID},
+		{Source: "workspaces/myworkspace/sources/test_source2", TrackingPlanId: testTrackingPlanID},
+	}
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestTrackingPlans_CreateTrackingPlansSourceConnection(t *testing.T) {
+	setup()
+	defer teardown()
+
+	endpoint := fmt.Sprintf("/%s/%s/%s/%s/%s/source-connections", apiVersion, WorkspacesEndpoint, testWorkspace, TrackingPlanEndpoint, testTrackingPlanID)
+
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		var j bytes.Buffer
+		b, err := io.ReadAll(r.Body)
+		assert.NoError(t, err)
+		assert.NoError(t, json.Compact(&j, b))
+		if r.Method == http.MethodPost && j.String() == fmt.Sprintf(`{"source_name":"workspaces/%s/sources/test_source1"}`, testWorkspace) {
+			fmt.Fprintf(w, `{
+				"source_name": "test_source1",
+				"tracking_plan_id": "%s"
+			}`, testTrackingPlanID)
+		}
+	})
+
+	err := client.CreateTrackingPlanSourceConnection(testTrackingPlanID, "test_source1")
+	assert.NoError(t, err)
+}
+
+func TestTrackingPlans_DeleteTrackingPlansSourceConnection(t *testing.T) {
+	setup()
+	defer teardown()
+
+	endpoint := fmt.Sprintf("/%s/%s/%s/%s/%s/source-connections/%s", apiVersion, WorkspacesEndpoint, testWorkspace, TrackingPlanEndpoint, testTrackingPlanID, "test_source1")
+
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodDelete {
+			fmt.Fprint(w, "{}")
+		}
+	})
+
+	err := client.DeleteTrackingPlanSourceConnection(testTrackingPlanID, "test_source1")
 	assert.NoError(t, err)
 }
