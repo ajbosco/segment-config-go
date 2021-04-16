@@ -9,9 +9,10 @@ segment-config-go is a Go client library for accessing the [Segment Config](http
 This library allows you to do the following programmatically:
 
 * List all your Segment sources and destinations
-* Create [sources](https://segment.com/docs/sources/) 
+* Create [sources](https://segment.com/docs/sources/)
 * Create or modify [destinations](https://segment.com/docs/destinations/)
 * Enable and disable destinations
+* Create, list or modify [tracking plans](https://segment.com/docs/protocols/tracking-plan/create/)
 
 ## Authentication
 
@@ -56,3 +57,111 @@ Create a new [destination](https://segment.com/docs/destinations/):
 source, err := c.CreateDestination("your-source", "google-analytics", "cloud", false, nil)
 ```
 
+Create a new [tracking plan](https://segment.com/docs/protocols/tracking-plan/create/):
+
+```go
+tp := TrackingPlan{
+    DisplayName: "Your Tracking Plan",
+    Rules: RuleSet{
+        Global: Rules{
+            Schema: "http://json-schema.org/draft-04/schema#",
+            Type:   "object",
+            Properties: RuleProperties{
+                Context: Properties{
+                    Type: "object",
+                    Properties: map[string]Property{},
+                },
+                Properties: Properties{},
+                Traits:     Properties{},
+            },
+        },
+        Events: []Event{
+            {
+                Name:        "Test Event",
+                Description: "A simple test event",
+                Rules: Rules{
+                    Schema: "http://json-schema.org/draft-07/schema#",
+                    Type:   "object",
+                    Properties: RuleProperties{
+                        Traits: Properties{},
+                        Properties: Properties{
+                            Required: []string{"user_id"},
+                            Type:     "object",
+                            Properties: map[string]Property{
+                                "user_id": {
+                                    Description: "unique id of the user",
+                                    Type:        []string{"string"},
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
+}
+trackingPlan, err := c.CreateTrackingPlan(tp)
+```
+
+Get an existing [tracking plan](https://segment.com/docs/protocols/tracking-plan/create/):
+
+```go
+trackingPlan, err := c.GetTrackingPlan("rs_123abc")
+```
+
+List all [tracking plans](https://segment.com/docs/protocols/tracking-plan/create/):
+
+```go
+trackingPlans, err := c.ListTrackingPlans()
+```
+
+Update an existing [tracking plan](https://segment.com/docs/protocols/tracking-plan/create/):
+```go
+tp := TrackingPlan{
+    DisplayName: "Your Tracking Plan",
+    Rules: RuleSet{
+        Global: Rules{
+            Schema: "http://json-schema.org/draft-04/schema#",
+            Type:   "object",
+            Properties: RuleProperties{
+                Context: Properties{
+                    Type: "object",
+                    Properties: map[string]Property{},
+                },
+                Properties: Properties{},
+                Traits:     Properties{},
+            },
+        },
+        Events: []Event{
+            {
+                Name:        "Test Event",
+                Description: "A simple test event",
+                Rules: Rules{
+                    Schema: "http://json-schema.org/draft-07/schema#",
+                    Type:   "object",
+                    Properties: RuleProperties{
+                        Traits: Properties{},
+                        Properties: Properties{
+                            Required: []string{"user_id"},
+                            Type:     "object",
+                            Properties: map[string]Property{
+                                "user_id": {
+                                    Description: "unique id of the user",
+                                    Type:        []string{"string"},
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
+}
+trackingPlan, err := c.UpdateTrackingPlan("rs_123abc", tp)
+```
+
+Delete an existing [tracking plan](https://segment.com/docs/protocols/tracking-plan/create/):
+
+```go
+err := client.DeleteTrackingPlan("rs_123abc")
+```
