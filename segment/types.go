@@ -1,6 +1,7 @@
 package segment
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -25,6 +26,44 @@ type Source struct {
 	WriteKeys     []string      `json:"write_keys,omitempty"`
 	LibraryConfig LibraryConfig `json:"library_config,omitempty"`
 	CreateTime    time.Time     `json:"create_time,omitempty"`
+}
+
+// CommonEventSettings provides accepted values for CommonTrackEventOnViolations, CommonIdentifyEventOnViolations and CommonGroupEventOnViolations
+type CommonEventSettings string
+
+const (
+	Allow CommonEventSettings = "ALLOW"
+
+	// Only for use with CommonTrackEventOnViolations
+	OmitProps CommonEventSettings = "OMIT_PROPERTIES"
+
+	// Only for use with CommonIdentifyEventOnViolations and CommonIdentifyEventOnViolations
+	OmitTraits CommonEventSettings = "OMIT_TRAITS"
+
+	Block CommonEventSettings = "BLOCK"
+)
+
+type SourceConfig struct {
+	Name                                string              `json:"name,omitempty"`
+	Parent                              string              `json:"parent,omitempty"`
+	AllowUnplannedTrackEvents           bool                `json:"allow_unplanned_track_events,omitempty"`
+	AllowUnplannedIdentifyTraits        bool                `json:"allow_unplanned_identify_traits,omitempty"`
+	AllowUnplannedGroupTraits           bool                `json:"allow_unplanned_group_traits,omitempty"`
+	AllowTrackEventOnViolations         bool                `json:"allow_track_event_on_violations,omitempty"`
+	AllowIdentifyTraitsOnViolations     bool                `json:"allow_identify_traits_on_violations,omitempty"`
+	AllowGroupTraitsOnViolations        bool                `json:"allow_group_traits_on_violations,omitempty"`
+	AllowUnplannedTrackEventsProperties bool                `json:"allow_unplanned_track_event_properties,omitempty"`
+	AllowTrackPropertiesOnViolations    bool                `json:"allow_track_properties_on_violations,omitempty"`
+	ForwardingBlockedEventsTo           string              `json:"forwarding_blocked_events_to,omitempty"`
+	ForwardingViolationsTo              string              `json:"forwarding_violations_to,omitempty"`
+	CommonTrackEventOnViolations        CommonEventSettings `json:"common_track_event_on_violations,omitempty"`
+	CommonIdentifyEventOnViolations     CommonEventSettings `json:"common_identify_event_on_violations,omitempty"`
+	CommonGroupEventOnViolations        CommonEventSettings `json:"common_group_event_on_violations,omitempty"`
+}
+
+type sourceConfigUpdateRequest struct {
+	Config     SourceConfig `json:"schema_config,omitempty"`
+	UpdateMask UpdateMask   `json:"update_mask,omitempty"`
 }
 
 // LibraryConfig contains information about a source's library
@@ -60,7 +99,7 @@ type DestinationConfig struct {
 	Type        string      `json:"type,omitempty"`
 }
 
-// UpdateMask contains information for updating Destinations
+// UpdateMask contains information for updating Destinations and Sources
 type UpdateMask struct {
 	Paths []string `json:"paths,omitempty"`
 }
@@ -105,6 +144,7 @@ type Rules struct {
 	Schema     string         `json:"$schema,omitempty"`
 	Type       string         `json:"type,omitempty"`
 	Properties RuleProperties `json:"properties,omitempty"`
+	Required   []string       `json:"required,omitempty"`
 }
 
 // RuleProperties contains the different properties of a specific type of rules
@@ -145,4 +185,13 @@ type trackingPlanCreateRequest struct {
 type trackingPlanUpdateRequest struct {
 	UpdateMask   UpdateMask   `json:"update_mask,omitempty"`
 	TrackingPlan TrackingPlan `json:"tracking_plan,omitempty"`
+}
+
+type SegmentApiError struct {
+	Message string `json:"error,omitempty"`
+	Code    int    `json:"code,omitempty"`
+}
+
+func (err *SegmentApiError) Error() string {
+	return fmt.Sprintf("Segment Error %d: %s", err.Code, err.Message)
 }
