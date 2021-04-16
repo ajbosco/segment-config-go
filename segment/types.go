@@ -144,6 +144,7 @@ type Rules struct {
 	Schema     string         `json:"$schema,omitempty"`
 	Type       string         `json:"type,omitempty"`
 	Properties RuleProperties `json:"properties,omitempty"`
+	Required   []string       `json:"required,omitempty"`
 }
 
 // RuleProperties contains the different properties of a specific type of rules
