@@ -60,6 +60,7 @@ const (
 					  },
 					  "email": {
 						"description": "user email",
+						"pattern": "@",
 						"type": "string"
 					  },
 					  "test_prop": {
@@ -188,6 +189,7 @@ func TestTrackingPlans_GetTrackingPlan(t *testing.T) {
 	assert.NoError(t, err)
 
 	version := 1
+	atsign := "@"
 	expected := TrackingPlan{
 		Name:        "workspaces/test/tracking-plans/rs_123abc",
 		DisplayName: "Test Tracking Plan",
@@ -229,6 +231,7 @@ func TestTrackingPlans_GetTrackingPlan(t *testing.T) {
 									},
 									"email": {
 										Description: "user email",
+										Pattern:     &atsign,
 										Type:        "string",
 									},
 									"test_prop": {
@@ -288,6 +291,7 @@ func TestTrackingPlans_CreateTrackingPlan(t *testing.T) {
 	})
 
 	version := 1
+	atsign := "@"
 	expected := TrackingPlan{
 		DisplayName: "Test Tracking Plan",
 		Rules: RuleSet{
@@ -328,6 +332,7 @@ func TestTrackingPlans_CreateTrackingPlan(t *testing.T) {
 									},
 									"email": {
 										Description: "user email",
+										Pattern:     &atsign,
 										Type:        "string",
 									},
 									"test_prop": {
@@ -391,6 +396,7 @@ func TestTrackingPlans_UpdateTrackingPlan(t *testing.T) {
 	})
 
 	version := 1
+	atsign := "@"
 	expected := TrackingPlan{
 		DisplayName: "Test Tracking Plan",
 		Rules: RuleSet{
@@ -431,6 +437,7 @@ func TestTrackingPlans_UpdateTrackingPlan(t *testing.T) {
 									},
 									"email": {
 										Description: "user email",
+										Pattern:     &atsign,
 										Type:        "string",
 									},
 									"test_prop": {
