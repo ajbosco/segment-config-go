@@ -78,8 +78,8 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 		return nil, fmt.Errorf("unauthorized access to endpoint")
 	case http.StatusNotFound:
 		return nil, fmt.Errorf("the requested uri does not exist")
-	case http.StatusBadRequest:
-		return nil, handleBadRequest(resp.Body)
+	case http.StatusBadRequest, http.StatusInternalServerError:
+		return nil, handleErrorRequest(resp.Body)
 	default:
 		return nil, fmt.Errorf("bad response code: %d", resp.StatusCode)
 	}
@@ -92,7 +92,7 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 	return body, nil
 }
 
-func handleBadRequest(body io.ReadCloser) error {
+func handleErrorRequest(body io.ReadCloser) error {
 	errBody, err := ioutil.ReadAll(body)
 	if err != nil {
 		return fmt.Errorf("the request is invalid")

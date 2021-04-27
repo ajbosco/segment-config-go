@@ -99,3 +99,18 @@ func Test_doRequest_httpError_badRequestUnstructured(t *testing.T) {
 	_, err := client.doRequest(http.MethodGet, "/", nil)
 	assert.EqualError(t, err, expected)
 }
+
+func Test_doRequest_httpError_internalServerError(t *testing.T) {
+	setup()
+	defer teardown()
+
+	expected := SegmentApiError{Code: 5, Message: "foo"}
+	errorJson := `{ "error": "foo", "code": 5 }`
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, errorJson, 500)
+	})
+
+	_, err := client.doRequest(http.MethodGet, "/", nil)
+	assert.EqualError(t, err, expected.Error())
+}
