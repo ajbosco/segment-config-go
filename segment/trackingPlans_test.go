@@ -58,6 +58,11 @@ const (
 						"description": "unique id of the user",
 						"type": "string"
 					  },
+					  "created": {
+						  "description": "a datetime string",
+						  "type": "string",
+						  "format": "date-time"
+					  },
 					  "email": {
 						"description": "user email",
 						"pattern": "@",
@@ -190,6 +195,7 @@ func TestTrackingPlans_GetTrackingPlan(t *testing.T) {
 
 	version := 1
 	atsign := "@"
+	datetimeFormat := "date-time"
 	expected := TrackingPlan{
 		Name:        "workspaces/test/tracking-plans/rs_123abc",
 		DisplayName: "Test Tracking Plan",
@@ -227,6 +233,11 @@ func TestTrackingPlans_GetTrackingPlan(t *testing.T) {
 								Properties: map[string]Property{
 									"user_id": {
 										Description: "unique id of the user",
+										Type:        "string",
+									},
+									"created": {
+										Description: "a datetime string",
+										Format:      &datetimeFormat,
 										Type:        "string",
 									},
 									"email": {
@@ -292,6 +303,7 @@ func TestTrackingPlans_CreateTrackingPlan(t *testing.T) {
 
 	version := 1
 	atsign := "@"
+	datetimeFormat := "date-time"
 	expected := TrackingPlan{
 		DisplayName: "Test Tracking Plan",
 		Rules: RuleSet{
@@ -328,6 +340,11 @@ func TestTrackingPlans_CreateTrackingPlan(t *testing.T) {
 								Properties: map[string]Property{
 									"user_id": {
 										Description: "unique id of the user",
+										Type:        "string",
+									},
+									"created": {
+										Description: "a datetime string",
+										Format:      &datetimeFormat,
 										Type:        "string",
 									},
 									"email": {
@@ -397,6 +414,7 @@ func TestTrackingPlans_UpdateTrackingPlan(t *testing.T) {
 
 	version := 1
 	atsign := "@"
+	datetimeFormat := "date-time"
 	expected := TrackingPlan{
 		DisplayName: "Test Tracking Plan",
 		Rules: RuleSet{
@@ -433,6 +451,11 @@ func TestTrackingPlans_UpdateTrackingPlan(t *testing.T) {
 								Properties: map[string]Property{
 									"user_id": {
 										Description: "unique id of the user",
+										Type:        "string",
+									},
+									"created": {
+										Description: "a datetime string",
+										Format:      &datetimeFormat,
 										Type:        "string",
 									},
 									"email": {
