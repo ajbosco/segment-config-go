@@ -166,6 +166,7 @@ type Property struct {
 	Description string              `json:"description,omitempty"`
 	Type        interface{}         `json:"type,omitempty"`
 	Pattern     *string             `json:"pattern,omitempty"`
+	Format      *string             `json:"format,omitempty"`
 	Items       *Property           `json:"items,omitempty"`
 	Properties  map[string]Property `json:"properties,omitempty"`
 	Required    []string            `json:"required,omitempty"`
