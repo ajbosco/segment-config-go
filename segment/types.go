@@ -163,13 +163,17 @@ type Properties struct {
 
 // Property contains information of a single property
 type Property struct {
-	Description string              `json:"description,omitempty"`
-	Type        interface{}         `json:"type,omitempty"`
-	Pattern     *string             `json:"pattern,omitempty"`
-	Format      *string             `json:"format,omitempty"`
-	Items       *Property           `json:"items,omitempty"`
-	Properties  map[string]Property `json:"properties,omitempty"`
-	Required    []string            `json:"required,omitempty"`
+	Description          string              `json:"description,omitempty"`
+	Type                 interface{}         `json:"type,omitempty"`
+	Pattern              *string             `json:"pattern,omitempty"`
+	Format               *string             `json:"format,omitempty"`
+	Items                *Property           `json:"items,omitempty"`
+	MinItems             *int                `json:"minItems,omitempty"`
+	AdditionalItems      interface{}         `json:"additionalItems,omitempty"`
+	Contains             *Property           `json:"contains,omitempty"`
+	Properties           map[string]Property `json:"properties,omitempty"`
+	AdditionalProperties interface{}         `json:"additionalProperties,omitempty"`
+	Required             []string            `json:"required,omitempty"`
 }
 
 // Event contains information about a single event of the tracking plan
