@@ -116,6 +116,7 @@ func (c *Client) UpdateSourceConfig(srcName string, config SourceConfig) (Source
 			"schema_config.allow_identify_traits_on_violations",
 			"schema_config.allow_group_traits_on_violations",
 			"schema_config.forwarding_violations_to",
+			"schema_config.allow_track_properties_on_violations",
 			"schema_config.common_track_event_on_violations",
 			"schema_config.common_identify_event_on_violations",
 			"schema_config.common_group_event_on_violations",
