@@ -114,3 +114,17 @@ func Test_doRequest_httpError_internalServerError(t *testing.T) {
 	_, err := client.doRequest(http.MethodGet, "/", nil)
 	assert.EqualError(t, err, expected.Error())
 }
+
+func Test_doRequest_httpError_toomanyrequests(t *testing.T) {
+	setup()
+	defer teardown()
+
+	expected := SegmentApiError{Code: 429, Message: "too many requests to API"}
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, "Too many", 429)
+	})
+
+	_, err := client.doRequest(http.MethodGet, "/", nil)
+	assert.EqualError(t, err, expected.Error())
+}
