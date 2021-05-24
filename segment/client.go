@@ -73,15 +73,17 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 	case http.StatusOK:
 	case http.StatusCreated:
 	case http.StatusUnauthorized:
-		return nil, fmt.Errorf("invalid access token")
+		return nil, &SegmentApiError{Message: "invalid access token", Code: resp.StatusCode}
 	case http.StatusForbidden:
-		return nil, fmt.Errorf("unauthorized access to endpoint")
+		return nil, &SegmentApiError{Message: "unauthorized access to endpoint", Code: resp.StatusCode}
 	case http.StatusNotFound:
-		return nil, fmt.Errorf("the requested uri does not exist")
+		return nil, &SegmentApiError{Message: "the requested uri does not exist", Code: resp.StatusCode}
 	case http.StatusBadRequest, http.StatusInternalServerError:
 		return nil, handleErrorRequest(resp.Body)
+	case http.StatusTooManyRequests:
+		return nil, &SegmentApiError{Message: "too many requests to API", Code: resp.StatusCode}
 	default:
-		return nil, fmt.Errorf("bad response code: %d", resp.StatusCode)
+		return nil, &SegmentApiError{Message: "bad response code", Code: resp.StatusCode}
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
