@@ -72,6 +72,10 @@ const (
 						"description": "test prop",
 						"type": "integer"
 					  },
+					  "enum_prop": {
+						"type": "string",
+						"enum": ["foo", "bar", null]
+					  },
 					  "array_prop": {
 						"type": "array",
 						"description": "array prop",
@@ -127,6 +131,10 @@ const (
 		]
 	}`
 )
+
+func newString(value string) *string {
+	return &value
+}
 
 func TestTrackingPlans_ListTrackingPlans(t *testing.T) {
 	setup()
@@ -249,6 +257,10 @@ func TestTrackingPlans_GetTrackingPlan(t *testing.T) {
 										Description: "test prop",
 										Type:        "integer",
 									},
+									"enum_prop": {
+										Type: "string",
+										Enum: []*string{newString("foo"), newString("bar"), nil},
+									},
 									"array_prop": {
 										Description: "array prop",
 										Type:        "array",
@@ -355,6 +367,10 @@ func TestTrackingPlans_CreateTrackingPlan(t *testing.T) {
 									"test_prop": {
 										Description: "test prop",
 										Type:        "integer",
+									},
+									"enum_prop": {
+										Type: "string",
+										Enum: []*string{newString("foo"), newString("bar"), nil},
 									},
 									"array_prop": {
 										Description: "array prop",
@@ -466,6 +482,10 @@ func TestTrackingPlans_UpdateTrackingPlan(t *testing.T) {
 									"test_prop": {
 										Description: "test prop",
 										Type:        "integer",
+									},
+									"enum_prop": {
+										Type: "string",
+										Enum: []*string{newString("foo"), newString("bar"), nil},
 									},
 									"array_prop": {
 										Description: "array prop",

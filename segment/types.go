@@ -174,6 +174,7 @@ type Property struct {
 	Properties           map[string]Property `json:"properties,omitempty"`
 	AdditionalProperties interface{}         `json:"additionalProperties,omitempty"`
 	Required             []string            `json:"required,omitempty"`
+	Enum                 []*string           `json:"enum,omitempty"`
 }
 
 // Event contains information about a single event of the tracking plan
