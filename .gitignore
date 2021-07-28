@@ -14,3 +14,6 @@
 .envrc
 
 vendor
+
+#IDEs
+.vscode
