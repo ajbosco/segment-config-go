@@ -1,4 +1,3 @@
-
 package segment
 
 const (
@@ -10,4 +9,6 @@ const (
 	DestinationEndpoint = "destinations"
 	// TrackingPlanEndpoint is the API endpoint for interacting with tracking plans
 	TrackingPlanEndpoint = "tracking-plans"
+	// DestinationFiltersEndpoint is the API endpoint for interacting with destination filters
+	DestinationFiltersEndpoint = "filters"
 )
