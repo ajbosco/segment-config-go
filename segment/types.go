@@ -100,18 +100,23 @@ type DestinationConfig struct {
 	Type        string      `json:"type,omitempty"`
 }
 
-type DestinationFilters struct {
-	Filters []DestinationFilter `json:"filters,omitempty"`
+type destinationFiltersListResponse struct {
+	Filters []DestinationFilter `json:"filters"`
+}
+
+type destinationFilterCRURequest struct {
+	Filter     DestinationFilter `json:"filter"`
+	UpdateMask UpdateMask        `json:"update_mask"`
 }
 
 type DestinationFilter struct {
-	Name        string `json:"name,omitempty"`
-	Title       string `json:"title,omitempty"`
-	Description string `json:"description,omitempty"`
+	Name        string `json:"name"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 	// FQL statement to match events coming through
-	Conditions string                   `json:"if,omitempty"`
-	Actions    DestinationFilterActions `json:"actions,omitempty"`
-	IsEnabled  bool                     `json:"enabled,omitempty"`
+	Conditions string                   `json:"if"`
+	Actions    DestinationFilterActions `json:"actions"`
+	IsEnabled  bool                     `json:"enabled"`
 }
 
 // Destination Filter action to be taken on the events matching the condition
@@ -182,7 +187,9 @@ func (a DropEventAction) ActionType() DestinationFilterActionType {
 }
 
 func NewDropEventAction() DropEventAction {
-	return DropEventAction{Type: DestinationFilterActionTypeDropEvent}
+	return DropEventAction{
+		Type: DestinationFilterActionTypeDropEvent,
+	}
 }
 
 type FieldsListEventAction struct {
@@ -203,13 +210,13 @@ func NewBlockListEventAction(fields EventDescription) FieldsListEventAction {
 }
 
 type EventDescription struct {
-	Context    EventFieldsSelection `json:"context,omitempty"`
-	Traits     EventFieldsSelection `json:"traits,omitempty"`
-	Properties EventFieldsSelection `json:"properties,omitempty"`
+	Context    EventFieldsSelection `json:"context"`
+	Traits     EventFieldsSelection `json:"traits"`
+	Properties EventFieldsSelection `json:"properties"`
 }
 
 type EventFieldsSelection struct {
-	Fields []string `json:"fields,omitempty"`
+	Fields []string `json:"fields"`
 }
 
 type SamplingEventAction struct {
@@ -230,6 +237,10 @@ func NewSamplingEventAction(percent float32, path string) SamplingEventAction {
 // UpdateMask contains information for updating Destinations and Sources
 type UpdateMask struct {
 	Paths []string `json:"paths,omitempty"`
+}
+
+func newUpdateMask(paths ...string) UpdateMask {
+	return UpdateMask{Paths: paths}
 }
 
 type sourceCreateRequest struct {
