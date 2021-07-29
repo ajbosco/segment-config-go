@@ -90,7 +90,7 @@ func Test_doRequest_httpError_badRequestUnstructured(t *testing.T) {
 	setup()
 	defer teardown()
 
-	expected := "the request is invalid"
+	expected := "request error unkown bad request\n"
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		http.Error(w, "bad request", 400)
