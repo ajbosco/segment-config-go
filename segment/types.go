@@ -201,11 +201,21 @@ func (a FieldsListEventAction) ActionType() DestinationFilterActionType {
 	return a.Type
 }
 
-func NewAllowListEventAction(fields EventDescription) FieldsListEventAction {
+func NewAllowListEventAction(properties []string, context []string, traits []string) FieldsListEventAction {
+	fields := EventDescription{
+		Context:    EventFieldsSelection{Fields: context},
+		Properties: EventFieldsSelection{Fields: properties},
+		Traits:     EventFieldsSelection{Fields: traits},
+	}
 	return FieldsListEventAction{Type: DestinationFilterActionTypeAllowList, Fields: fields}
 }
 
-func NewBlockListEventAction(fields EventDescription) FieldsListEventAction {
+func NewBlockListEventAction(properties []string, context []string, traits []string) FieldsListEventAction {
+	fields := EventDescription{
+		Context:    EventFieldsSelection{Fields: context},
+		Properties: EventFieldsSelection{Fields: properties},
+		Traits:     EventFieldsSelection{Fields: traits},
+	}
 	return FieldsListEventAction{Type: DestinationFilterActionTypeBlockList, Fields: fields}
 }
 
