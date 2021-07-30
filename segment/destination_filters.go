@@ -70,13 +70,13 @@ func (c *Client) GetDestinationFilter(srcName string, destinationName string, fi
 		return nil, err
 	}
 
-	var d destinationFilterCRURequest
-	err = json.Unmarshal(data, &d)
+	var filter DestinationFilter
+	err = json.Unmarshal(data, &filter)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal filter")
 	}
 
-	return &d.Filter, nil
+	return &filter, nil
 }
 
 func (c *Client) DeleteDestinationFilter(srcName string, destinationName string, filterId string) error {

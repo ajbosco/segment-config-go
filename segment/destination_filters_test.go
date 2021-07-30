@@ -284,9 +284,7 @@ func TestDestinationFilters_GetFilter(t *testing.T) {
 		endpoint := fmt.Sprintf("/%s/%s", apiVersion, testCase.filter.Name)
 
 		mux.HandleFunc(endpoint, withValidRequest(t, "GET", "", func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintf(w, `{
-				"filter": %s
-			}`, testCase.filterJSON)
+			fmt.Fprintf(w, testCase.filterJSON)
 		}))
 
 		t.Run(fmt.Sprintf("GetFilter for %s", testCase.filterJSON), func(t *testing.T) {
