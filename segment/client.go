@@ -97,13 +97,13 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 func handleErrorRequest(body io.ReadCloser) error {
 	errBody, err := ioutil.ReadAll(body)
 	if err != nil {
-		return fmt.Errorf("the request is invalid")
+		return fmt.Errorf("the request error body is invalid: %s", errBody)
 	}
 
 	var segmentErr SegmentApiError
 	err = json.Unmarshal(errBody, &segmentErr)
 	if err != nil {
-		return fmt.Errorf("the request is invalid")
+		return fmt.Errorf("request error unkown %s", errBody)
 	}
 
 	return &segmentErr

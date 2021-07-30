@@ -1,6 +1,7 @@
 package segment
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -99,9 +100,147 @@ type DestinationConfig struct {
 	Type        string      `json:"type,omitempty"`
 }
 
+type destinationFiltersListResponse struct {
+	Filters []DestinationFilter `json:"filters"`
+}
+
+type destinationFilterCRURequest struct {
+	Filter     DestinationFilter `json:"filter"`
+	UpdateMask UpdateMask        `json:"update_mask"`
+}
+
+type DestinationFilter struct {
+	Name        string `json:"name"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	// FQL statement to match events coming through
+	Conditions string                   `json:"if"`
+	Actions    DestinationFilterActions `json:"actions"`
+	IsEnabled  bool                     `json:"enabled"`
+}
+
+// Destination Filter action to be taken on the events matching the condition
+type DestinationFilterAction interface {
+	ActionType() DestinationFilterActionType
+}
+
+type DestinationFilterActions []DestinationFilterAction
+
+func (actions *DestinationFilterActions) UnmarshalJSON(data []byte) error {
+	*actions = DestinationFilterActions{}
+	var rawActions []json.RawMessage
+	if err := json.Unmarshal(data, &rawActions); err != nil {
+		return err
+	}
+	for _, rawAction := range rawActions {
+		temp := struct {
+			Type DestinationFilterActionType `json:"type"`
+		}{}
+		if err := json.Unmarshal(rawAction, &temp); err != nil {
+			return err
+		}
+		switch temp.Type {
+		case DestinationFilterActionTypeDropEvent:
+			var action DropEventAction
+			if err := json.Unmarshal(rawAction, &action); err != nil {
+				return err
+			}
+			*actions = append(*actions, action)
+		case DestinationFilterActionTypeAllowList:
+			var action FieldsListEventAction
+			if err := json.Unmarshal(rawAction, &action); err != nil {
+				return err
+			}
+			*actions = append(*actions, action)
+		case DestinationFilterActionTypeBlockList:
+			var action FieldsListEventAction
+			if err := json.Unmarshal(rawAction, &action); err != nil {
+				return err
+			}
+			*actions = append(*actions, action)
+		case DestinationFilterActionTypeSampling:
+			var action SamplingEventAction
+			if err := json.Unmarshal(rawAction, &action); err != nil {
+				return err
+			}
+			*actions = append(*actions, action)
+		}
+	}
+	return nil
+}
+
+type DestinationFilterActionType string
+
+const (
+	DestinationFilterActionTypeDropEvent DestinationFilterActionType = "drop_event"
+	DestinationFilterActionTypeAllowList DestinationFilterActionType = "whitelist_fields"
+	DestinationFilterActionTypeBlockList DestinationFilterActionType = "blacklist_fields"
+	DestinationFilterActionTypeSampling  DestinationFilterActionType = "sample_event"
+)
+
+type DropEventAction struct {
+	Type DestinationFilterActionType `json:"type"`
+}
+
+func (a DropEventAction) ActionType() DestinationFilterActionType {
+	return a.Type
+}
+
+func NewDropEventAction() DropEventAction {
+	return DropEventAction{
+		Type: DestinationFilterActionTypeDropEvent,
+	}
+}
+
+type FieldsListEventAction struct {
+	Type   DestinationFilterActionType `json:"type"`
+	Fields EventDescription            `json:"fields"`
+}
+
+func (a FieldsListEventAction) ActionType() DestinationFilterActionType {
+	return a.Type
+}
+
+func NewAllowListEventAction(fields EventDescription) FieldsListEventAction {
+	return FieldsListEventAction{Type: DestinationFilterActionTypeAllowList, Fields: fields}
+}
+
+func NewBlockListEventAction(fields EventDescription) FieldsListEventAction {
+	return FieldsListEventAction{Type: DestinationFilterActionTypeBlockList, Fields: fields}
+}
+
+type EventDescription struct {
+	Context    EventFieldsSelection `json:"context"`
+	Traits     EventFieldsSelection `json:"traits"`
+	Properties EventFieldsSelection `json:"properties"`
+}
+
+type EventFieldsSelection struct {
+	Fields []string `json:"fields"`
+}
+
+type SamplingEventAction struct {
+	Type DestinationFilterActionType `json:"type"`
+	// If the type is "sample_event", then the value is a number between 0.0 and 1.0
+	Percent float32 `json:"percent"`
+	Path    string  `json:"path"`
+}
+
+func (a SamplingEventAction) ActionType() DestinationFilterActionType {
+	return a.Type
+}
+
+func NewSamplingEventAction(percent float32, path string) SamplingEventAction {
+	return SamplingEventAction{Type: DestinationFilterActionTypeSampling, Percent: percent, Path: path}
+}
+
 // UpdateMask contains information for updating Destinations and Sources
 type UpdateMask struct {
 	Paths []string `json:"paths,omitempty"`
+}
+
+func newUpdateMask(paths ...string) UpdateMask {
+	return UpdateMask{Paths: paths}
 }
 
 type sourceCreateRequest struct {
