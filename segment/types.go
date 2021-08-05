@@ -201,18 +201,40 @@ func (a FieldsListEventAction) ActionType() DestinationFilterActionType {
 	return a.Type
 }
 
-func NewAllowListEventAction(fields EventDescription) FieldsListEventAction {
+func NewAllowListEventAction(properties []string, context []string, traits []string) FieldsListEventAction {
+	fields := EventDescription{}
+
+	if len(context) > 0 {
+		fields.Context = &EventFieldsSelection{Fields: context}
+	}
+	if len(properties) > 0 {
+		fields.Properties = &EventFieldsSelection{Fields: properties}
+	}
+	if len(traits) > 0 {
+		fields.Traits = &EventFieldsSelection{Fields: traits}
+	}
 	return FieldsListEventAction{Type: DestinationFilterActionTypeAllowList, Fields: fields}
 }
 
-func NewBlockListEventAction(fields EventDescription) FieldsListEventAction {
+func NewBlockListEventAction(properties []string, context []string, traits []string) FieldsListEventAction {
+	fields := EventDescription{}
+
+	if len(context) > 0 {
+		fields.Context = &EventFieldsSelection{Fields: context}
+	}
+	if len(properties) > 0 {
+		fields.Properties = &EventFieldsSelection{Fields: properties}
+	}
+	if len(traits) > 0 {
+		fields.Traits = &EventFieldsSelection{Fields: traits}
+	}
 	return FieldsListEventAction{Type: DestinationFilterActionTypeBlockList, Fields: fields}
 }
 
 type EventDescription struct {
-	Context    EventFieldsSelection `json:"context"`
-	Traits     EventFieldsSelection `json:"traits"`
-	Properties EventFieldsSelection `json:"properties"`
+	Context    *EventFieldsSelection `json:"context,omitempty"`
+	Traits     *EventFieldsSelection `json:"traits,omitempty"`
+	Properties *EventFieldsSelection `json:"properties,omitempty"`
 }
 
 type EventFieldsSelection struct {

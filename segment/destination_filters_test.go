@@ -55,13 +55,9 @@ const sampleFilter2JSON = `
 `
 
 var sampleFilter2 = DestinationFilter{
-	Name:       "workspaces/test-workspace/sources/test-source/destinations/test-dest/filters/df_1JjE7f3gz8OXU6lVbUGuDhHcyKz",
-	Conditions: "!(event = \"Session Started\" or event = \"Order Completed\")",
-	Actions: []DestinationFilterAction{NewBlockListEventAction(EventDescription{
-		Context:    EventFieldsSelection{Fields: []string{"foo"}},
-		Properties: EventFieldsSelection{Fields: []string{"bar"}},
-		Traits:     EventFieldsSelection{Fields: []string{"baz"}},
-	})},
+	Name:        "workspaces/test-workspace/sources/test-source/destinations/test-dest/filters/df_1JjE7f3gz8OXU6lVbUGuDhHcyKz",
+	Conditions:  "!(event = \"Session Started\" or event = \"Order Completed\")",
+	Actions:     []DestinationFilterAction{NewBlockListEventAction([]string{"bar"}, []string{"foo"}, []string{"baz"})},
 	Title:       "Only allow Session Started and Order Completed events",
 	Description: "Those events are used for this and that",
 	IsEnabled:   false,
@@ -88,13 +84,9 @@ const sampleFilter3JSON = `
 `
 
 var sampleFilter3 = DestinationFilter{
-	Name:       "workspaces/test-workspace/sources/test-source/destinations/test-dest/filters/df_1JjE7f3gz8OXU6lVbUGuDhHcyKz",
-	Conditions: "!(event = \"Session Started\" or event = \"Order Completed\")",
-	Actions: []DestinationFilterAction{NewAllowListEventAction(EventDescription{
-		Context:    EventFieldsSelection{Fields: []string{"baz"}},
-		Properties: EventFieldsSelection{Fields: []string{"bar"}},
-		Traits:     EventFieldsSelection{Fields: []string{"foo"}},
-	})},
+	Name:        "workspaces/test-workspace/sources/test-source/destinations/test-dest/filters/df_1JjE7f3gz8OXU6lVbUGuDhHcyKz",
+	Conditions:  "!(event = \"Session Started\" or event = \"Order Completed\")",
+	Actions:     []DestinationFilterAction{NewAllowListEventAction([]string{"bar"}, []string{"baz"}, []string{"foo"})},
 	Title:       "Only allow Session Started and Order Completed events",
 	Description: "Those events are used for this and that",
 	IsEnabled:   false,
@@ -284,9 +276,7 @@ func TestDestinationFilters_GetFilter(t *testing.T) {
 		endpoint := fmt.Sprintf("/%s/%s", apiVersion, testCase.filter.Name)
 
 		mux.HandleFunc(endpoint, withValidRequest(t, "GET", "", func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintf(w, `{
-				"filter": %s
-			}`, testCase.filterJSON)
+			fmt.Fprintf(w, testCase.filterJSON)
 		}))
 
 		t.Run(fmt.Sprintf("GetFilter for %s", testCase.filterJSON), func(t *testing.T) {
