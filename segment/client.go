@@ -103,7 +103,7 @@ func handleErrorRequest(body io.ReadCloser) error {
 	var segmentErr SegmentApiError
 	err = json.Unmarshal(errBody, &segmentErr)
 	if err != nil {
-		return fmt.Errorf("request error unkown: %s", errBody)
+		return fmt.Errorf("request error unknown: %s", errBody)
 	}
 
 	return &segmentErr
