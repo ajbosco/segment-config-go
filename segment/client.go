@@ -75,9 +75,9 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 	case http.StatusUnauthorized:
 		return nil, &SegmentApiError{Message: "invalid access token", Code: resp.StatusCode}
 	case http.StatusForbidden:
-		return nil, &SegmentApiError{Message: "unauthorized access to endpoint", Code: resp.StatusCode}
+		return nil, &SegmentApiError{Message: fmt.Sprintf("unauthorized access to endpoint: %s", endpoint), Code: resp.StatusCode}
 	case http.StatusNotFound:
-		return nil, &SegmentApiError{Message: "the requested uri does not exist", Code: resp.StatusCode}
+		return nil, &SegmentApiError{Message: fmt.Sprintf("the requested uri does not exist: %s", uri), Code: resp.StatusCode}
 	case http.StatusBadRequest, http.StatusInternalServerError:
 		return nil, handleErrorRequest(resp.Body)
 	case http.StatusTooManyRequests:
@@ -103,7 +103,7 @@ func handleErrorRequest(body io.ReadCloser) error {
 	var segmentErr SegmentApiError
 	err = json.Unmarshal(errBody, &segmentErr)
 	if err != nil {
-		return fmt.Errorf("request error unkown %s", errBody)
+		return fmt.Errorf("request error unkown: %s", errBody)
 	}
 
 	return &segmentErr
