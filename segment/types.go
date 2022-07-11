@@ -334,6 +334,7 @@ type Property struct {
 	Contains             *Property           `json:"contains,omitempty"`
 	Properties           map[string]Property `json:"properties,omitempty"`
 	AdditionalProperties interface{}         `json:"additionalProperties,omitempty"`
+	PatternProperties    map[string]Property `json:"patternProperties,omitempty"`
 	Required             []string            `json:"required,omitempty"`
 	Enum                 []*string           `json:"enum,omitempty"`
 }
