@@ -1,4 +1,4 @@
-module github.com/ajbosco/segment-config-go
+module github.com/uswitch/segment-config-go
 
 go 1.16
 
